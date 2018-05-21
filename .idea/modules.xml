@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete.iml" filepath="$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete_main.iml" filepath="$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete_main.iml" group="gs-actuator-service-complete" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete_test.iml" filepath="$PROJECT_DIR$/.idea/modules/gs-actuator-service-complete_test.iml" group="gs-actuator-service-complete" />
+    </modules>
+  </component>
+</project>
