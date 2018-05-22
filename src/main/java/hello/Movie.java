@@ -1,7 +1,6 @@
 package hello;
 
 public class Movie {
-
     private final String title;
 
     public Movie(String title) {

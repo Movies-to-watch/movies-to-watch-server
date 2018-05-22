@@ -1,95 +1,103 @@
 package hello;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class AppController {
-
     private final String prefixHttp = "http://www.omdbapi.com/?t=";
     private final String suffixHttp = "&apikey=ecf845f8";
-    private List<User> users = new ArrayList<>();
+    private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com"; //
 
+    private Map<String, User> users = new HashMap<>();
 
+    @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movies")
     @ResponseBody
-    public List<MovieJSON> getMovies(@RequestParam(name="userId", required=false) String userId) {
-        users.add(new User(Integer.parseInt(userId))); // TODO: to jest dodane dla mocka, zeby był jakis uzytkownik
-        final User user = getUserFromRequest(userId);
-        final List<Movie> movies = getUserMovies(user);
-        return getMoviesInfo(movies);
+    public List<MovieJSON> getMovies(String userId) {
+        final User user = getUser(userId);
+        return getMoviesInfo(user.getMovies());
     }
 
+    @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movie")
     @ResponseBody
-    public MovieJSON getMovieByTitle(@RequestParam(name="userId", required=false) String userId, String title) {
-        final User user = getUserFromRequest(userId);
-        final Movie movie = getMovieFromTitle(user, title);
-        final List<Movie> movies = new ArrayList<Movie>();
-        movies.add(movie);
-        return getMoviesInfo(movies).get(0);
+    public MovieJSON getMovieByTitle(String userId, String title) {
+        final User user = getUser(userId);
+        return getMovieInfo(getMovieFromTitle(user, title).get());
     }
 
+    @CrossOrigin(origins = ORIGINS)
     @PostMapping("/movies/new")
-    @ResponseStatus(HttpStatus.OK)
-    public String addMovie(@RequestParam(name="userId", required=false) String userId, String title) {
-        final User user = getUserFromRequest(userId);
-        user.addMovie(new Movie(title));
-        return "OK";
-    }
+    @ResponseBody
+    public Object addMovie(String userId, String title) {
+        final User user = getUser(userId);
+        final String parsedTitle = title.trim().toLowerCase();
+        final Movie newMovie = new Movie(parsedTitle);
 
-    @DeleteMapping("/movie")
-    @ResponseStatus(HttpStatus.OK)
-    public String deleteMovie(@RequestParam(name="userId", required=false) String userId, String title) {
-        final User user = getUserFromRequest(userId);
-        user.deleteMovie(getMovieFromTitle(user, title));
-        return "OK";
-    }
+        if(getMovieFromTitle(user, parsedTitle).isPresent())
+            return HttpStatus.ALREADY_REPORTED;
 
-    private Movie getMovieFromTitle(User user, String title) {
-        for(Movie movie : user.getMovies()) {
-            if (movie.getTitle().equals(title)) {
-                return movie;
-            }
+        if(getMovieInfo(newMovie) == null) {
+            return HttpStatus.BAD_REQUEST;
         }
-        return null;
+
+        user.addMovie(newMovie);
+        return HttpStatus.CREATED;
     }
 
-    private User getUserFromRequest(String userId) {
-        for (User user: users) {
-            if (user.getUserId() == Integer.parseInt(userId)) {
-                return user;
-            }
-        }
-        return null;
+    @CrossOrigin(origins = ORIGINS)
+    @DeleteMapping("/movies/delete")
+    @ResponseBody
+    public Object deleteMovie(String userId, String title) {
+        final User user = getUser(userId);
+        user.deleteMovie(getMovieFromTitle(user, title).get());
+        return HttpStatus.OK;
     }
 
-    private List<Movie> getUserMovies(User user) {
-        return user.getMovies();
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private User getUser(String userId){
+        if(!users.containsKey(userId))
+            users.put(userId, new User(userId));
+
+        return users.get(userId);
+    }
+
+    private Optional<Movie> getMovieFromTitle(User user, String title) {
+        String parsedTitle = title.trim().toLowerCase();
+        return user.getMovies().stream().filter(movie -> movie.getTitle().equals(parsedTitle)).findFirst();
     }
 
     private List<MovieJSON> getMoviesInfo(List<Movie> movies) {
-        List<MovieJSON> moviesInfoList = new ArrayList<>();
-        for (Movie movie: movies) {
-            RestTemplate rt = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
-            HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-            String url = prefixHttp + movie.getTitle() + suffixHttp;
-            ResponseEntity<String> res = rt.exchange(url, HttpMethod.GET, entity, String.class);
-            moviesInfoList.add(createMovieJSON(res.getBody()));
-        }
-        return moviesInfoList;
+        return movies.stream().map(this::getMovieInfo).collect(Collectors.toList());
+    }
+
+    private HttpHeaders createHeaders(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
+        return headers;
+    }
+
+    private MovieJSON getMovieInfo(Movie movie){
+        ResponseEntity<String> res = new RestTemplate().exchange(
+            String.format("%s%s%s", prefixHttp, movie.getTitle(), suffixHttp),
+            HttpMethod.GET,
+            new HttpEntity<>("parameters", createHeaders()),
+            String.class
+        );
+
+        return res.getStatusCode() == HttpStatus.OK
+            ? createMovieJSON(res.getBody())
+            : null;
     }
 
     private MovieJSON createMovieJSON(String json) {
@@ -104,27 +112,25 @@ public class AppController {
         final String production = obj.getString("Production");
         final String website = obj.getString("Website");
         final String actors = obj.getString("Actors");
-        final String ratings = obj.getString("imdbRating");
+        final JSONArray ratings = obj.getJSONArray("Ratings");
         final String awards = obj.getString("Awards");
         final String plot = obj.getString("Plot");
 
-        // TODO: nie usuwaj printów, bo może mi się do debugu przydać jeszcze
-        System.out.println(id);
-        System.out.println(title);
-        System.out.println(poster);
-        System.out.println(year);
-        System.out.println(runtime);
-        System.out.println(genre);
-        System.out.println(director);
-        System.out.println(production);
-        System.out.println(website);
-        System.out.println(actors);
-        System.out.println(ratings);
-        System.out.println(awards);
-        System.out.println(plot);
-
         return new MovieJSON(id, title, poster, year, runtime, genre, director, production,
-                website, actors, ratings, awards, plot);
+            website, actors, ratings, awards, plot);
     }
-
+        // TODO: nie usuwaj printów, bo może mi się do debugu przydać jeszcze (zakomentuje :))
+//        System.out.println(id);
+//        System.out.println(title);
+//        System.out.println(poster);
+//        System.out.println(year);
+//        System.out.println(runtime);
+//        System.out.println(genre);
+//        System.out.println(director);
+//        System.out.println(production);
+//        System.out.println(website);
+//        System.out.println(actors);
+//        System.out.println(ratings);
+//        System.out.println(awards);
+//        System.out.println(plot);
 }

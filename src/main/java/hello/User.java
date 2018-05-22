@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
+    private String userId;
+    private List<Movie> movies;
 
-    private int userId;
-    private List<Movie> movies = new ArrayList<>();
-
-    public User(int userId) {
+    public User(String userId) {
         this.userId = userId;
-        // TODO" te 3 poniżej dodane dla mocka
-        addMovie(new Movie("gladiator"));
-        addMovie(new Movie("batman"));
-        addMovie(new Movie("juno"));
+        this.movies = new ArrayList<>();
     }
 
     public void addMovie(Movie movie) {
@@ -24,7 +20,7 @@ public class User {
         movies.remove(movie);
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 

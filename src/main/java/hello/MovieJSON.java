@@ -1,12 +1,12 @@
 package hello;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import org.json.JSONArray;
 
 import java.io.Serializable;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MovieJSON implements Serializable{
-
     private final String id;
     private final String title;
     private final String poster;
@@ -22,7 +22,7 @@ public class MovieJSON implements Serializable{
     private final String plot;
 
     public MovieJSON(String id, String title, String poster, String year, String runtime, String genre,
-                 String director, String production, String website, String actors, String ratings,
+                 String director, String production, String website, String actors, JSONArray ratings,
                  String awards, String plot) {
         this.id = id;
         this.title = title;
@@ -34,7 +34,7 @@ public class MovieJSON implements Serializable{
         this.production = production;
         this.website = website;
         this.actors = actors;
-        this.ratings = ratings;
+        this.ratings = ratings.toString();
         this.awards = awards;
         this.plot = plot;
     }
