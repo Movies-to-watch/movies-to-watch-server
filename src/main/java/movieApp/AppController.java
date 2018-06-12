@@ -19,6 +19,23 @@ public class AppController {
     private Map<String, User> users = new HashMap<>();
 
     @CrossOrigin(origins = ORIGINS)
+    @PostMapping("/login")
+    @ResponseBody
+    public String loginUser(String userId) {
+        final String uniqueToken = UserUtil.getUniqueToken();
+        users.put(uniqueToken, new User(userId));
+        return uniqueToken;
+    }
+
+    @CrossOrigin(origins = ORIGINS)
+    @PostMapping("/logout")
+    @ResponseBody
+    public Object logoutUser(String token) {
+        users.remove(token);
+        return HttpStatus.OK;
+    }
+
+    @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movies")
     @ResponseBody
     public List<StatusMovieJSON> getMovies(String token) {
@@ -61,15 +78,6 @@ public class AppController {
 
         user.addMovie(newMovie);
         return HttpStatus.CREATED;
-    }
-
-    @CrossOrigin(origins = ORIGINS)
-    @PostMapping("/login")
-    @ResponseBody
-    public String loginUser(String userId) {
-        final String uniqueToken = UserUtil.getUniqueToken();
-        users.put(uniqueToken, new User(userId));
-        return uniqueToken;
     }
 
     @CrossOrigin(origins = ORIGINS)
