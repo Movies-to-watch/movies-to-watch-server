@@ -38,4 +38,8 @@ public class MovieJSON implements Serializable{
         this.awards = awards;
         this.plot = plot;
     }
+
+    public String getTitle() {
+        return title;
+    }
 }

@@ -57,7 +57,7 @@ public final class MovieUtil {
     public static Movie getMovieFromTitle(User user, String title) {
         Set<Movie> userMovies = user.getMovies().keySet();
         for(Movie movie : userMovies) {
-            if (movie.getTitle().equals(title.trim().toLowerCase())) {
+            if (movie.getTitle().equals(title)) {
                 return movie;
             }
         }

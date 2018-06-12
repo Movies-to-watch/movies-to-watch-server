@@ -15,8 +15,8 @@ public class User {
         this.movies = new HashMap<>();
     }
 
-    public void addMovie(Movie movie) {
-        movies.put(movie, false);
+    public void addMovie(String title) {
+        movies.put(new Movie(title), false);
     }
 
     public void deleteMovie(Movie movie) {

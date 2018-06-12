@@ -76,7 +76,7 @@ public class AppController {
             return HttpStatus.BAD_REQUEST;
         }
 
-        user.addMovie(newMovie);
+        user.addMovie(MovieUtil.getMovieInfo(newMovie).getTitle());
         return HttpStatus.CREATED;
     }
 
