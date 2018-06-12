@@ -1,5 +1,8 @@
-package movieApp.model.movie;
+package movieApp.utils;
 
+import movieApp.model.movie.Movie;
+import movieApp.model.movie.MovieJSON;
+import movieApp.model.movie.StatusMovieJSON;
 import movieApp.model.user.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,19 +39,19 @@ public final class MovieUtil {
 
     private static MovieJSON createMovieJSON(String json) {
         JSONObject obj = new JSONObject(json);
-        final String id = obj.getString("imdbID");
-        final String title = obj.getString("Title");
-        final String poster = obj.getString("Poster");
-        final String year = obj.getString("Year");
-        final String runtime = obj.getString("Runtime");
-        final String genre = obj.getString("Genre");
-        final String director = obj.getString("Director");
-        final String production = obj.getString("Production");
-        final String website = obj.getString("Website");
-        final String actors = obj.getString("Actors");
-        final JSONArray ratings = obj.getJSONArray("Ratings");
-        final String awards = obj.getString("Awards");
-        final String plot = obj.getString("Plot");
+        final String id = JsonUtil.getParsedField(obj, "imdbID");
+        final String title = JsonUtil.getParsedField(obj,"Title");
+        final String poster = JsonUtil.getParsedField(obj,"Poster");
+        final String year = JsonUtil.getParsedField(obj,"Year");
+        final String runtime = JsonUtil.getParsedField(obj,"Runtime");
+        final String genre = JsonUtil.getParsedField(obj,"Genre");
+        final String director = JsonUtil.getParsedField(obj,"Director");
+        final String production = JsonUtil.getParsedField(obj,"Production");
+        final String website = JsonUtil.getParsedField(obj,"Website");
+        final String actors = JsonUtil.getParsedField(obj,"Actors");
+        final JSONArray ratings = JsonUtil.getParsedJsonArray(obj,"Ratings");
+        final String awards = JsonUtil.getParsedField(obj,"Awards");
+        final String plot = JsonUtil.getParsedField(obj,"Plot");
 
         return new MovieJSON(id, title, poster, year, runtime, genre, director, production,
                 website, actors, ratings, awards, plot);

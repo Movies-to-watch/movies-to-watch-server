@@ -1,4 +1,6 @@
-package movieApp.model.user;
+package movieApp.utils;
+
+import movieApp.model.user.User;
 
 import java.util.Map;
 import java.util.UUID;
