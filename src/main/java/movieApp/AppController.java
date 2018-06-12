@@ -21,24 +21,24 @@ public class AppController {
     @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movies")
     @ResponseBody
-    public List<StatusMovieJSON> getMovies(String userId) {
-        final User user = UserUtil.getUser(users, userId);
+    public List<StatusMovieJSON> getMovies(String token) {
+        final User user = UserUtil.getUser(users, token);
         return MovieUtil.getMoviesInfo(user.getMovies());
     }
 
     @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movie")
     @ResponseBody
-    public MovieJSON getMovieByTitle(String userId, String title) {
-        final User user = UserUtil.getUser(users, userId);
+    public MovieJSON getMovieByTitle(String token, String title) {
+        final User user = UserUtil.getUser(users, token);
         return MovieUtil.getMovieInfo(Objects.requireNonNull(MovieUtil.getMovieFromTitle(user, title)));
     }
 
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/movie/status")
     @ResponseBody
-    public Object setMovieStatus(String userId, String title, Boolean status) {
-        final User user = UserUtil.getUser(users, userId);
+    public Object setMovieStatus(String token, String title, Boolean status) {
+        final User user = UserUtil.getUser(users, token);
         UserUtil.setMovieStatus(user, title, status);
         return HttpStatus.OK;
     }
@@ -46,8 +46,8 @@ public class AppController {
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/movies/new")
     @ResponseBody
-    public Object addMovie(String userId, String title) {
-        final User user = UserUtil.getUser(users, userId);
+    public Object addMovie(String token, String title) {
+        final User user = UserUtil.getUser(users, token);
         final String parsedTitle = title.trim().toLowerCase();
         final Movie newMovie = new Movie(parsedTitle);
 
@@ -64,10 +64,19 @@ public class AppController {
     }
 
     @CrossOrigin(origins = ORIGINS)
+    @PostMapping("/login")
+    @ResponseBody
+    public String loginUser(String userId) {
+        final String uniqueToken = UserUtil.getUniqueToken();
+        users.put(uniqueToken, new User(userId));
+        return uniqueToken;
+    }
+
+    @CrossOrigin(origins = ORIGINS)
     @DeleteMapping("/movies/delete")
     @ResponseBody
-    public Object deleteMovie(String userId, String title) {
-        final User user = UserUtil.getUser(users, userId);
+    public Object deleteMovie(String token, String title) {
+        final User user = UserUtil.getUser(users, token);
         user.deleteMovie(MovieUtil.getMovieFromTitle(user, title));
         return HttpStatus.OK;
     }
