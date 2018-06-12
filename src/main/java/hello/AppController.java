@@ -1,6 +1,5 @@
 package hello;
 
-import javafx.util.Pair;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ public class AppController {
     @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movies")
     @ResponseBody
-    public List<Pair<MovieJSON, Boolean>> getMovies(String userId) {
+    public List<StatusMovieJSON> getMovies(String userId) {
         final User user = UserUtil.getUser(users, userId);
         return MovieUtil.getMoviesInfo(user.getMovies());
     }

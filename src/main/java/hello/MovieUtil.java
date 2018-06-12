@@ -1,6 +1,5 @@
 package hello;
 
-import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
@@ -13,10 +12,10 @@ public class MovieUtil {
     private static final String prefixHttp = "http://www.omdbapi.com/?t=";
     private static final String suffixHttp = "&apikey=ecf845f8";
 
-    protected static List<Pair<MovieJSON, Boolean>> getMoviesInfo(HashMap<Movie, Boolean> movies) {
-        List<Pair<MovieJSON, Boolean>> userMovies = new ArrayList<>();
+    protected static List<StatusMovieJSON> getMoviesInfo(HashMap<Movie, Boolean> movies) {
+        List<StatusMovieJSON> userMovies = new ArrayList<>();
         for (Movie movie : movies.keySet()) {
-            userMovies.add(new Pair<>(getMovieInfo(movie), movies.get(movie)));
+            userMovies.add(new StatusMovieJSON(getMovieInfo(movie), movies.get(movie)));
         }
         return userMovies;
     }
