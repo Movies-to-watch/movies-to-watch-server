@@ -1,5 +1,11 @@
-package hello;
+package movieApp;
 
+import movieApp.model.movie.Movie;
+import movieApp.model.movie.MovieJSON;
+import movieApp.model.movie.MovieUtil;
+import movieApp.model.movie.StatusMovieJSON;
+import movieApp.model.user.User;
+import movieApp.model.user.UserUtil;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

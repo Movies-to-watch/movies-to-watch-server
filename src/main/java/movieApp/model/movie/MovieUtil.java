@@ -1,5 +1,6 @@
-package hello;
+package movieApp.model.movie;
 
+import movieApp.model.user.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.*;
@@ -7,12 +8,12 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-public class MovieUtil {
+public final class MovieUtil {
 
     private static final String prefixHttp = "http://www.omdbapi.com/?t=";
     private static final String suffixHttp = "&apikey=ecf845f8";
 
-    protected static List<StatusMovieJSON> getMoviesInfo(HashMap<Movie, Boolean> movies) {
+    public static List<StatusMovieJSON> getMoviesInfo(HashMap<Movie, Boolean> movies) {
         List<StatusMovieJSON> userMovies = new ArrayList<>();
         for (Movie movie : movies.keySet()) {
             userMovies.add(new StatusMovieJSON(getMovieInfo(movie), movies.get(movie)));
@@ -20,7 +21,7 @@ public class MovieUtil {
         return userMovies;
     }
 
-    protected static MovieJSON getMovieInfo(Movie movie){
+    public static MovieJSON getMovieInfo(Movie movie){
         ResponseEntity<String> res = new RestTemplate().exchange(
                 String.format("%s%s%s", prefixHttp, movie.getTitle(), suffixHttp),
                 HttpMethod.GET,
@@ -53,7 +54,7 @@ public class MovieUtil {
                 website, actors, ratings, awards, plot);
     }
 
-    protected static Movie getMovieFromTitle(User user, String title) {
+    public static Movie getMovieFromTitle(User user, String title) {
         Set<Movie> userMovies = user.getMovies().keySet();
         for(Movie movie : userMovies) {
             if (movie.getTitle().equals(title.trim().toLowerCase())) {

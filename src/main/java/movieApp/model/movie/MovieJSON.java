@@ -1,4 +1,4 @@
-package hello;
+package movieApp.model.movie;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.json.JSONArray;

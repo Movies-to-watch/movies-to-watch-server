@@ -1,6 +1,9 @@
-package hello;
+package movieApp.model.user;
+
+import movieApp.model.movie.Movie;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class User {

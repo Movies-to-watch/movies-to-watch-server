@@ -1,4 +1,4 @@
-package hello;
+package movieApp.model.movie;
 
 public class Movie {
     private final String title;
