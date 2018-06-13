@@ -3,7 +3,6 @@ package movieApp.model.user;
 import movieApp.model.movie.Movie;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class User {
@@ -34,7 +33,7 @@ public class User {
     public void setMovieStatus (String title, boolean newValue) {
         Set<Movie> userMovies = movies.keySet();
         for(Movie movie : userMovies) {
-            if (movie.getTitle().equals(title.trim().toLowerCase())) {
+            if (movie.getTitle().equals(title)) {
                 movies.replace(movie, newValue);
             }
         }

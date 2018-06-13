@@ -14,7 +14,7 @@ import java.util.*;
 
 @Controller
 public class AppController {
-    private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com"; //
+    private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com";
 
     private Map<String, User> users = new HashMap<>();
 
@@ -72,11 +72,12 @@ public class AppController {
             return HttpStatus.ALREADY_REPORTED;
         }
 
-        if(MovieUtil.getMovieInfo(newMovie) == null) {
+        MovieJSON movieJSON = MovieUtil.getMovieInfo(newMovie);
+        if(movieJSON == null || movieJSON.getId().equals("")) {
             return HttpStatus.BAD_REQUEST;
         }
 
-        user.addMovie(MovieUtil.getMovieInfo(newMovie).getTitle());
+        user.addMovie(movieJSON.getTitle());
         return HttpStatus.CREATED;
     }
 
