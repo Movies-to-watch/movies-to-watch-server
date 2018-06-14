@@ -45,9 +45,6 @@ public class UserTest {
         user1.getMovies().replace(movie, true);
         user2.setMovieStatus("ABC", true);
 
-        System.out.println(user1.getMovies().entrySet().stream().findFirst().get().getValue());
-        System.out.println(user2.getMovies().entrySet().stream().findFirst().get().getValue());
-
         assertTrue(user1.getMovies().entrySet().stream().findFirst().get().getValue()
                 .equals(user2.getMovies().entrySet().stream().findFirst().get().getValue()));
     }

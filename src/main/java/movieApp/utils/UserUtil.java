@@ -8,9 +8,6 @@ import java.util.UUID;
 public final class UserUtil {
 
     public static User getUser(Map<String, User> users, String token){
-//        if(!users.containsKey(userId))
-//            users.put(userId, new User(userId));
-
         return users.get(token);
     }
 
