@@ -10,6 +10,8 @@ import movieApp.model.movie.StatusMovieJSON;
 import movieApp.model.user.User;
 import movieApp.utils.MovieUtil;
 import movieApp.utils.UserUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +27,15 @@ public class AppController {
     private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com";
     private Map<String, User> users = new HashMap<>();
 
+    private final Environment env;
+
+    @Autowired
+    public AppController(Environment env) {
+        this.env = env;
+    }
+
     private String getClientId(){
-        String CLIENT_ID = System.getenv("CLIENT_ID");
+        String CLIENT_ID = env.getProperty("CLIENT_ID");
         if(CLIENT_ID == null){
             try {
                 BufferedReader br = new BufferedReader(new FileReader("config"));
