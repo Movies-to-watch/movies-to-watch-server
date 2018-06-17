@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -22,6 +24,17 @@ import java.util.*;
 public class AppController {
     private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com";
     private Map<String, User> users = new HashMap<>();
+
+    private String getClientId(){
+        String CLIENT_ID = System.getenv("CLIENT_ID");
+        if(CLIENT_ID == null){
+            try {
+                BufferedReader br = new BufferedReader(new FileReader("config"));
+                CLIENT_ID = br.readLine();
+            } catch (Exception e) {e.printStackTrace();}
+        }
+        return CLIENT_ID;
+    }
 
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/login")
@@ -32,10 +45,9 @@ public class AppController {
             return "test";
         }
 
-        final String CLIENT_ID = "524087473078-p1v8lbg0edsu6lhirkhav5c9flm8s4gp.apps.googleusercontent.com";
         GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
-                .setAudience(Collections.singletonList(CLIENT_ID))
-                .build();
+            .setAudience(Collections.singletonList(getClientId()))
+            .build();
 
         GoogleIdToken idToken = null;
         try {idToken = verifier.verify(token);}
