@@ -6,3 +6,6 @@
 bin/
 build/
 target/
+apache-jmeter-4.0/**
+gs-actuator-service.iml
+src/test/resources/

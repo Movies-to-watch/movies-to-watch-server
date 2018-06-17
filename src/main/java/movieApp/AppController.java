@@ -1,5 +1,9 @@
 package movieApp;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import movieApp.model.movie.Movie;
 import movieApp.model.movie.MovieJSON;
 import movieApp.model.movie.StatusMovieJSON;
@@ -11,34 +15,64 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
 public class AppController {
     private final String ORIGINS = "https://movies-to-watch-client.herokuapp.com";
-
     private Map<String, User> users = new HashMap<>();
 
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/login")
     @ResponseBody
-    public String loginUser(String userId, HttpServletResponse response) {
-        final String uniqueToken = UserUtil.getUniqueToken();
-        users.put(uniqueToken, new User(userId));
+    public String loginUser(String token, HttpServletResponse response) {
+        if(token.equals("test")){
+            users.put(token, new User("test"));
+            return "test";
+        }
 
-        response.setStatus(HttpStatus.OK.value());
-        return uniqueToken;
+        final String CLIENT_ID = "524087473078-p1v8lbg0edsu6lhirkhav5c9flm8s4gp.apps.googleusercontent.com";
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new JacksonFactory())
+                .setAudience(Collections.singletonList(CLIENT_ID))
+                .build();
+
+        GoogleIdToken idToken = null;
+        try {idToken = verifier.verify(token);}
+        catch (IOException e) {e.printStackTrace();}
+        catch (Exception e){
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return "";
+        }
+
+        if (idToken != null) {
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String userId = payload.getSubject();
+
+            for (Map.Entry<String, User> userEntry: users.entrySet()) {
+                User user = userEntry.getValue();
+
+                if(user.getUserId().equals(userId)){
+                    users.remove(userEntry.getKey());
+                    users.put(token, user);
+                }
+            }
+            users.computeIfAbsent(token, k -> new User(userId));
+
+            response.setStatus(HttpStatus.OK.value());
+            return token;
+        }
+        else {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            return "";
+        }
     }
 
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/logout")
     @ResponseBody
     public Object logoutUser(String token, HttpServletResponse response) {
-        users.remove(token);
-
+        //logout
         response.setStatus(HttpStatus.OK.value());
         return "";
     }

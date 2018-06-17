@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 public final class MovieUtil {
-
     private static final String prefixHttp = "http://www.omdbapi.com/?t=";
     private static final String suffixHttp = "&apikey=ecf845f8";
 
