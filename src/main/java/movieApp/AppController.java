@@ -35,14 +35,15 @@ public class AppController {
     }
 
     private String getClientId(){
-        String CLIENT_ID = env.getProperty("CLIENT_ID");
-        if(CLIENT_ID == null){
-            try {
-                BufferedReader br = new BufferedReader(new FileReader("config"));
-                CLIENT_ID = br.readLine();
-            } catch (Exception e) {e.printStackTrace();}
+        String SERVER_CLIENT_ID;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("config"));
+            SERVER_CLIENT_ID = br.readLine();
+        } catch (Exception e) {
+            SERVER_CLIENT_ID = env.getProperty("SERVER_CLIENT_ID");
         }
-        return CLIENT_ID;
+
+        return SERVER_CLIENT_ID;
     }
 
     @CrossOrigin(origins = ORIGINS)
