@@ -3,7 +3,7 @@ package movieApp.utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class JsonUtil {
+public final class JsonUtil {
 
     public static String getParsedField(JSONObject obj, String field) {
         try {
