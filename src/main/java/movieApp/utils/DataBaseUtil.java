@@ -19,6 +19,7 @@ public final class DataBaseUtil {
     }
 
     public static String getUserIdByToken(String token) throws SQLException {
+        token = token.substring(0, Math.min(token.length(), 255));
         Connection connection = null;
         ResultSet result;
         try {
