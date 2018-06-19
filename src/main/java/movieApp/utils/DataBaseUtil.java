@@ -115,6 +115,25 @@ public final class DataBaseUtil {
         Objects.requireNonNull(connection).close();
     }
 
+    public static boolean checkIfMovieWasAlreadyAdded(String userid, String title) throws SQLException {
+        Connection connection = null;
+        ResultSet result;
+        try {
+            connection = getConnection();
+        } catch (Exception ex) {
+            System.out.println("Connection failed.");
+        }
+        if (connection != null) {
+            String query = "SELECT * FROM MOVIES WHERE userid=? AND movie=?";
+            PreparedStatement pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, Integer.parseInt(userid));
+            pstmt.setString(2, title);
+            result = pstmt.executeQuery();
+            return result.next();
+        }
+        return false;
+    }
+
     public static void changeMovieStatus(String userid, String title, Boolean status) throws SQLException {
         Connection connection = null;
         try {
