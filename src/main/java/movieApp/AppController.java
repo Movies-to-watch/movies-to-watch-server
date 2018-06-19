@@ -70,6 +70,7 @@ public class AppController {
             String userId = payload.getSubject();
             BigDecimal userIdBigDecimal = new BigDecimal(userId);
             int userIdInt = userIdBigDecimal.intValue();
+            token = token.substring(0, Math.min(token.length(), 255));
 
             DataBaseUtil.createOrUpdateUserTokenInDatabase(String.valueOf(userIdInt), token);
             response.setStatus(HttpStatus.OK.value());
