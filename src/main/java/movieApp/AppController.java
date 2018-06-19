@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
 
@@ -67,8 +68,10 @@ public class AppController {
         if (idToken != null) {
             GoogleIdToken.Payload payload = idToken.getPayload();
             String userId = payload.getSubject();
+            BigDecimal userIdBigDecimal = new BigDecimal(userId);
+            int userIdInt = userIdBigDecimal.intValue();
 
-            DataBaseUtil.createOrUpdateUserTokenInDatabase(userId, token);
+            DataBaseUtil.createOrUpdateUserTokenInDatabase(String.valueOf(userIdInt), token);
             response.setStatus(HttpStatus.OK.value());
             return token;
         }
