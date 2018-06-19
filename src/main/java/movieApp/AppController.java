@@ -136,7 +136,7 @@ public class AppController {
             return "Movie with such title does not exist.";
         }
 
-        if(DataBaseUtil.checkIfMovieWasAlreadyAdded(userid, title)) {
+        if(DataBaseUtil.checkIfMovieWasAlreadyAdded(userid, movieJSON.getTitle())) {
             response.setStatus(HttpStatus.ALREADY_REPORTED.value());
             return "Movie with such title is already added.";
         }
