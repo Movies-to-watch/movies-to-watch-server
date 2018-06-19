@@ -108,8 +108,8 @@ public class AppController {
 //            System.out.println("Failed to make connection!");
 //        }
 
-//    public String loginUser(String token, HttpServletResponse response) {
-    public String loginUser(String token) throws SQLException, URISyntaxException {
+    public String loginUser(String token, HttpServletResponse response) throws SQLException {
+//    public String loginUser(String token) throws SQLException, URISyntaxException {
 
         if(token.equals("test")){
             DataBaseUtil.createOrUpdateUserTokenInDatabase("123", token);
@@ -124,7 +124,7 @@ public class AppController {
         try {idToken = verifier.verify(token);}
         catch (IOException e) {e.printStackTrace();}
         catch (Exception e){
-//            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             return "";
         }
 
@@ -133,11 +133,11 @@ public class AppController {
             String userId = payload.getSubject();
 
             DataBaseUtil.createOrUpdateUserTokenInDatabase(userId, token);
-//            response.setStatus(HttpStatus.OK.value());
+            response.setStatus(HttpStatus.OK.value());
             return token;
         }
         else {
-//            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.FORBIDDEN.value());
             return "";
         }
 }
@@ -154,26 +154,26 @@ public class AppController {
     @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movies")
     @ResponseBody
-//    public List<StatusMovieJSON> getMovies(String token, HttpServletResponse response) {
-    public List<StatusMovieJSON> getMovies(String token) throws SQLException {
+    public List<StatusMovieJSON> getMovies(String token, HttpServletResponse response) throws SQLException {
+//    public List<StatusMovieJSON> getMovies(String token) throws SQLException {
         final String userid = DataBaseUtil.getUserIdByToken(token);
         System.out.println(userid);
 
         HashMap<Movie, Boolean> userMovies = DataBaseUtil.getUserMovies(userid);
 //        System.out.println(userMovies);
-//        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.OK.value());
         return MovieUtil.getMoviesInfo(userMovies);
     }
 
     @CrossOrigin(origins = ORIGINS)
     @GetMapping("/movie")
     @ResponseBody
-//    public MovieJSON getMovieByTitle(String token, String title, HttpServletResponse response) throws SQLException {
-    public MovieJSON getMovieByTitle(String token, String title) throws SQLException {
+    public MovieJSON getMovieByTitle(String token, String title, HttpServletResponse response) throws SQLException {
+//    public MovieJSON getMovieByTitle(String token, String title) throws SQLException {
         final String userid = DataBaseUtil.getUserIdByToken(token);
         System.out.println(userid);
 
-//        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.OK.value());
         return MovieUtil.getMovieInfo(new Movie(title));
 //        return MovieUtil.getMovieInfo(Objects.requireNonNull(MovieUtil.getMovieFromTitle(user, title)));
     }
@@ -181,24 +181,23 @@ public class AppController {
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/movie/status")
     @ResponseBody
-//    public Object setMovieStatus(String token, String title, Boolean status, HttpServletResponse response) throws SQLException {
-    public Object setMovieStatus(String token, String title, Boolean status) throws SQLException {
-//    public Object setMovieStatus(String token, String title, Boolean status) {
+    public Object setMovieStatus(String token, String title, Boolean status, HttpServletResponse response) throws SQLException {
+//    public Object setMovieStatus(String token, String title, Boolean status) throws SQLException {
         final String userid = DataBaseUtil.getUserIdByToken(token);
         System.out.println(userid);
 
         DataBaseUtil.changeMovieStatus(userid, title, status);
 //        UserUtil.setMovieStatus(user, title, status);
 
-//        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.OK.value());
         return "";
     }
 
     @CrossOrigin(origins = ORIGINS)
     @PostMapping("/movies/new")
     @ResponseBody
-//    public Object addMovie(String token, String title, HttpServletResponse response) {
-    public Object addMovie(String token, String title) throws SQLException {
+    public Object addMovie(String token, String title, HttpServletResponse response) throws SQLException {
+//    public Object addMovie(String token, String title) throws SQLException {
         final String userid = DataBaseUtil.getUserIdByToken(token);
         System.out.println(userid);
 
@@ -207,21 +206,21 @@ public class AppController {
 
         MovieJSON movieJSON = MovieUtil.getMovieInfo(newMovie);
         if(movieJSON == null || movieJSON.getId().equals("")) {
-//            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return "Movie with such title does not exist.";
         }
 
         DataBaseUtil.addMovieToUserId(userid, movieJSON.getTitle());
 
-//        response.setStatus(HttpStatus.CREATED.value());
+        response.setStatus(HttpStatus.CREATED.value());
         return "";
     }
 
     @CrossOrigin(origins = ORIGINS)
     @DeleteMapping("/movies/delete")
     @ResponseBody
-//    public Object deleteMovie(String token, String title, HttpServletResponse response) {
-    public Object deleteMovie(String token, String title) throws SQLException {
+    public Object deleteMovie(String token, String title, HttpServletResponse response) throws SQLException {
+//    public Object deleteMovie(String token, String title) throws SQLException {
         System.out.println("delete");
         final String userid = DataBaseUtil.getUserIdByToken(token);
         System.out.println(userid);
@@ -229,7 +228,7 @@ public class AppController {
         DataBaseUtil.deleteMovieForUser(userid, title);
 //        user.deleteMovie(MovieUtil.getMovieFromTitle(user, title));
 
-//        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.OK.value());
         return "";
     }
 
