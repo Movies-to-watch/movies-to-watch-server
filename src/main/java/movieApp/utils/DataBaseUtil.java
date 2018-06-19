@@ -129,8 +129,9 @@ public final class DataBaseUtil {
             pstmt.setInt(1, Integer.parseInt(userid));
             pstmt.setString(2, title);
             result = pstmt.executeQuery();
+            final boolean exists = result.next();
             Objects.requireNonNull(connection).close();
-            return result.next();
+            return exists;
         }
         return false;
     }
