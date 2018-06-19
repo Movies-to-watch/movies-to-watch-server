@@ -18,14 +18,6 @@ public class User {
         movies.put(new Movie(title), false);
     }
 
-    public void deleteMovie(Movie movie) {
-        movies.remove(movie);
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
     public HashMap<Movie, Boolean> getMovies() {
         return movies;
     }

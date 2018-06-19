@@ -89,9 +89,6 @@ public final class DataBaseUtil {
             while (result.next()) {
                 String movieTitle = result.getString("movie");
                 Boolean status = result.getBoolean("status");
-                System.out.println(movieTitle);
-                System.out.println(status);
-                System.out.println("SSSS");
                 userMovies.put(new Movie(movieTitle), status);
                 Objects.requireNonNull(connection).close();
             }
